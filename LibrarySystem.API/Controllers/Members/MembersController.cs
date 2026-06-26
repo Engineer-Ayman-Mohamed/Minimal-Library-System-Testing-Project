@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibrarySystem.API.Controllers.Members;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class MembersController : ControllerBase
 {
     private readonly IMemberService _memberService;

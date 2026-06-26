@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibrarySystem.API.Controllers.Loans;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class LoansController : ControllerBase
 {
     private readonly ILoanService _loanService;
