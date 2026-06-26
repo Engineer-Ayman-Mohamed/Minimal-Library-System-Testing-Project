@@ -14,6 +14,7 @@ public class LibrarySystemContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("Library");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(LibrarySystemContext).Assembly);
     }
 }
