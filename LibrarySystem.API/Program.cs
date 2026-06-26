@@ -15,15 +15,15 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApiVersioning(options =>
     {
-        options.DefaultApiVersion = new ApiVersion(1, 0);
-        options.AssumeDefaultVersionWhenUnspecified = true;
-        options.ReportApiVersions = true;
-        options.ApiVersionReader = new UrlSegmentApiVersionReader();
-    })
+        options.DefaultApiVersion = new ApiVersion(1, 0); //? default version
+        options.AssumeDefaultVersionWhenUnspecified = true; //? accept request without specify api version (problem when there is more than one version)
+        options.ReportApiVersions = true; //? add informations about the api version supported/deprecated with no docs
+        options.ApiVersionReader = new UrlSegmentApiVersionReader(); //? reading the api version from the URL another ways(query, header)
+    }) //? this is integration for the api versioning in swagger for documentation in swagger
     .AddApiExplorer(options =>
     {
-        options.GroupNameFormat = "'v'VVV";
-        options.SubstituteApiVersionInUrl = true;
+        options.GroupNameFormat = "'v'VVV"; //? v -> for the version number, VVV is the formatting of the version number
+        options.SubstituteApiVersionInUrl = true; //? tells swagger to replace the version in Route(template) with actual version number
     });
 
 builder.Services.AddDbContext<LibrarySystemContext>(options =>

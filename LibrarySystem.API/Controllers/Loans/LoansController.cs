@@ -49,4 +49,32 @@ public class LoansController : ControllerBase
         }
         catch (AlreadyReturnedException ex) { return UnprocessableEntity(new { message = ex.Message }); }
     }
+
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<LoanDto>> Update(int id, [FromBody] UpdateLoanDto dto)
+    {
+        try
+        {
+            var loan = await _loanService.UpdateAsync(id, dto.DueDate);
+            return Ok(_mapper.Map<LoanDto>(loan));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _loanService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
 }

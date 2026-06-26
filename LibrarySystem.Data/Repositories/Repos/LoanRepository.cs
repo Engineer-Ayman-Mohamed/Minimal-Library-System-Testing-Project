@@ -61,4 +61,14 @@ public class LoanRepository : ILoanRepository
     {
         return await _context.Loans.AnyAsync(l => l.BookId == bookId && l.ReturnedAt == null);
     }
+
+    public async Task DeleteAsync(int id)
+    {
+        var loan = await _context.Loans.FindAsync(id);
+        if (loan != null)
+        {
+            _context.Loans.Remove(loan);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

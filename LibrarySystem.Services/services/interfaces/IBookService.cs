@@ -10,6 +10,8 @@ public interface IBookService
     Task<Book?> GetByISBNAsync(string isbn);
     Task<Book> CreateAsync(string title, string author, string isbn, int totalCopies);
     Task<bool> ExistsByISBNAsync(string isbn);
+    Task<Book> UpdateAsync(int id, string title, string author, string isbn, int totalCopies);
+    Task DeleteAsync(int id);
     Task DecrementAvailableCopiesAsync(int bookId);
     Task IncrementAvailableCopiesAsync(int bookId);
 }

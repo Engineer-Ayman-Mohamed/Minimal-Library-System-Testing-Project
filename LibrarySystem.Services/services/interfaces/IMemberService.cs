@@ -10,4 +10,5 @@ public interface IMemberService
     Task<Member> CreateAsync(string fullName, string email, DateTime membershipExpiryDate);
     Task<bool> ExistsByEmailAsync(string email);
     Task UpdateAsync(Member member);
+    Task DeleteAsync(int id);
 }

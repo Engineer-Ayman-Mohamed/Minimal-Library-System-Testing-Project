@@ -47,4 +47,31 @@ public class MembersController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
+
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<MemberDto>> Update(int id, [FromBody] UpdateMemberDto dto)
+    {
+        var member = await _memberService.GetByIdAsync(id);
+        if (member == null) return NotFound();
+
+        member.FullName = dto.FullName;
+        member.Email = dto.Email;
+        member.MembershipExpiryDate = dto.MembershipExpiryDate;
+
+        await _memberService.UpdateAsync(member);
+
+        var result = _mapper.Map<MemberDto>(member);
+        result.ActiveLoanCount = (await _loanService.GetActiveLoansForMemberAsync(id)).Count;
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var member = await _memberService.GetByIdAsync(id);
+        if (member == null) return NotFound();
+
+        await _memberService.DeleteAsync(id);
+        return NoContent();
+    }
 }
