@@ -132,13 +132,13 @@ namespace LibrarySystem.Data.Migrations
                     b.HasOne("LibrarySystem.Data.Entities.Book", "Book")
                         .WithMany("Loans")
                         .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("LibrarySystem.Data.Entities.Member", "Member")
                         .WithMany("Loans")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Book");

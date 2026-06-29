@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibrarySystem.API.Controllers.Books;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
@@ -46,5 +46,33 @@ public class BooksController : ControllerBase
 
         var result = _mapper.Map<BookDto>(created);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<BookDto>> Update(int id, [FromBody] UpdateBookDto dto)
+    {
+        try
+        {
+            var updated = await _bookService.UpdateAsync(id, dto.Title, dto.Author, dto.ISBN, dto.TotalCopies);
+            return Ok(_mapper.Map<BookDto>(updated));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _bookService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 }

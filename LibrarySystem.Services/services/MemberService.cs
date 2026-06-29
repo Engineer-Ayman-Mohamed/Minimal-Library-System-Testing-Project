@@ -50,4 +50,13 @@ public class MemberService : IMemberService
     {
         await _memberRepository.UpdateAsync(member);
     }
+
+    public async Task DeleteAsync(int id)
+    {
+        var member = await _memberRepository.GetByIdAsync(id);
+        if (member == null)
+            throw new InvalidOperationException("Member not found.");
+
+        await _memberRepository.DeleteAsync(id);
+    }
 }

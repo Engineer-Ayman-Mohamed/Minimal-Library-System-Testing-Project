@@ -127,4 +127,37 @@ public class LoanService : ILoanService
         var daysLate = (returnedAt - borrowedAt.AddDays(LOAN_DURATION_DAYS)).Days;
         return daysLate * FINE_PER_DAY;
     }
+
+    public async Task<Loan> UpdateAsync(int id, DateTime dueDate)
+    {
+        var loan = await _loanRepository.GetByIdAsync(id);
+        if (loan == null)
+            throw new InvalidOperationException("Loan not found.");
+
+        if (loan.ReturnedAt != null)
+            throw new InvalidOperationException("Cannot update a returned loan.");
+
+        loan.DueDate = dueDate;
+        await _loanRepository.UpdateAsync(loan);
+        return loan;
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var loan = await _loanRepository.GetByIdAsync(id);
+        if (loan == null)
+            throw new InvalidOperationException("Loan not found.");
+
+        if (loan.ReturnedAt != null)
+            throw new InvalidOperationException("Cannot delete a returned loan.");
+
+        var book = await _bookRepository.GetByIdAsync(loan.BookId);
+        if (book != null)
+        {
+            book.AvailableCopies++;
+            await _bookRepository.UpdateAsync(book);
+        }
+
+        await _loanRepository.DeleteAsync(id);
+    }
 }

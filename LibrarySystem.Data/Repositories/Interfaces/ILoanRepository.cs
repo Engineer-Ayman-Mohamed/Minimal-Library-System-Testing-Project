@@ -11,4 +11,5 @@ public interface ILoanRepository
     Task<Loan> AddAsync(Loan loan);
     Task UpdateAsync(Loan loan);
     Task<bool> HasActiveLoanForBookAsync(int bookId);
+    Task DeleteAsync(int id);
 }

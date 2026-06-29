@@ -71,4 +71,31 @@ public class BookService : IBookService
             await _bookRepository.UpdateAsync(book);
         }
     }
+
+    public async Task<Book> UpdateAsync(int id, string title, string author, string isbn, int totalCopies)
+    {
+        var book = await _bookRepository.GetByIdAsync(id);
+        if (book == null)
+            throw new InvalidOperationException("Book not found.");
+
+        book.Title = title;
+        book.Author = author;
+        book.ISBN = isbn;
+        book.TotalCopies = totalCopies;
+
+        await _bookRepository.UpdateAsync(book);
+        return book;
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var book = await _bookRepository.GetByIdAsync(id);
+        if (book == null)
+            throw new InvalidOperationException("Book not found.");
+
+        if (book.AvailableCopies < book.TotalCopies)
+            throw new InvalidOperationException("Cannot delete a book that is currently on loan.");
+
+        await _bookRepository.DeleteAsync(id);
+    }
 }

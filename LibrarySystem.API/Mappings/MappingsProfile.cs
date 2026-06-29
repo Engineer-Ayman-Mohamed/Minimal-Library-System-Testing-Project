@@ -19,5 +19,9 @@ public class MappingsProfile : Profile
             .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : string.Empty))
             .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member != null ? src.Member.FullName : string.Empty));
         CreateMap<CreateLoanDto, Loan>();
+        
+        CreateMap<UpdateBookDto, Book>();
+        CreateMap<UpdateMemberDto, Member>();
+        CreateMap<UpdateLoanDto, Loan>();
     }
 }
