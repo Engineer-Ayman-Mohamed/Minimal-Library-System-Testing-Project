@@ -26,13 +26,15 @@ builder.Services.AddApiVersioning(options =>
         options.SubstituteApiVersionInUrl = true; //? tells swagger to replace the version in Route(template) with actual version number
     });
 
-builder.Services.AddDbContext<LibrarySystemContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-        .EnableSensitiveDataLogging()
-        .LogTo(Console.WriteLine, LogLevel.Information);
-});
-
+//if (!builder.Environment.IsEnvironment("IntegrationTest"))
+//{
+//    builder.Services.AddDbContext<LibrarySystemContext>(options =>
+//    {
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
+//            .EnableSensitiveDataLogging()
+//            .LogTo(Console.WriteLine, LogLevel.Information);
+//    });
+//}
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
@@ -51,18 +53,19 @@ builder.Services.AddAutoMapper(configAction: config =>
 });
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-    await seeder.SeedAsync();
-}
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+//if (!app.Environment.IsEnvironment("IntegrationTest"))
+//{
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+//        await seeder.SeedAsync();
+//    }
+//}
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
