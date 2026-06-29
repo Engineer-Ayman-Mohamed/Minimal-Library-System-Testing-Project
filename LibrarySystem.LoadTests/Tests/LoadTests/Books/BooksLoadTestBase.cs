@@ -7,17 +7,26 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.LoadTests.Books;
 
+/// <summary>
+///     Base class for Books load/stress/spike tests.
+///     Seeds 60 books and 30 members, then provides concurrent GET /api/v1/Books execution.
+/// </summary>
 public abstract class BooksLoadTestBase : IAsyncLifetime
 {
     protected readonly LoadTestBase _fixture;
     protected readonly ITestOutputHelper _output;
     protected HttpClient Client => _fixture.Client;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BooksLoadTestBase" /> class.
+    /// </summary>
     protected BooksLoadTestBase(LoadTestBase fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
         _output = output;
     }
 
+    /// <summary>Clears existing data and seeds fresh books and members.</summary>
     public async Task InitializeAsync()
     {
         _fixture.LibrarySystemContext.Loans.RemoveRange(_fixture.LibrarySystemContext.Loans);
@@ -51,8 +60,10 @@ public abstract class BooksLoadTestBase : IAsyncLifetime
         await _fixture.LibrarySystemContext.SaveChangesAsync();
     }
 
+    /// <inheritdoc />
     public Task DisposeAsync() => Task.CompletedTask;
 
+    /// <summary>Runs a number of concurrent simulated users with the given think time.</summary>
     protected async Task RunUsersAsync(
         int userCount, MetricsCollector metrics,
         CancellationToken ct, int thinkTimeMs

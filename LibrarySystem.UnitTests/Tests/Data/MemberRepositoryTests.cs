@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace LibrarySystem.UnitTests.Tests.Data;
 
+/// <summary>Unit tests for MemberRepository using an in-memory SQLite database.</summary>
 public class MemberRepositoryTests : IDisposable
 {
     private readonly SqliteConnection _connection;
@@ -27,6 +28,7 @@ public class MemberRepositoryTests : IDisposable
         _repository = new MemberRepository(_context);
     }
     
+    /// <summary>Verifies that adding a member with a duplicate email throws DbUpdateException.</summary>
     [Fact]
     public async Task AddAsync_DuplicateEmail_ThrowsDbUpdateException()
     {
@@ -40,6 +42,7 @@ public class MemberRepositoryTests : IDisposable
         );
     }
     
+    /// <summary>Verifies that adding a book with a duplicate ISBN throws DbUpdateException.</summary>
     [Fact]
     public async Task AddAsync_DuplicateISBN_ThrowsDbUpdateException()
     {
@@ -54,6 +57,7 @@ public class MemberRepositoryTests : IDisposable
         );
     }
     
+    /// <summary>Verifies that deleting a member with active loans throws an exception.</summary>
     [Fact]
     public async Task Delete_MemberWithActiveLoans_ThrowsException()
     {

@@ -8,6 +8,7 @@ using Shouldly;
 
 namespace LibrarySystem.IntegrationTests.Tests.Loan;
 
+/// <summary>Integration tests for the Loans API endpoints covering delete and update scenarios.</summary>
 public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
 {
     private readonly ApiFixture _fixture;
@@ -44,6 +45,7 @@ public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
     }
     public Task DisposeAsync() => Task.CompletedTask;
     
+    /// <summary>Verifies that PATCH on a returned loan returns NotFound.</summary>
     [Fact]
     public async Task Patch_ReturnedLoan_ReturnsNotFound()
     {
@@ -54,6 +56,7 @@ public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that DELETE on an active loan returns NoContent.</summary>
     [Fact]
     public async Task Delete_ActiveLoan_ReturnsNoContent()
     {
@@ -62,6 +65,7 @@ public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
+    /// <summary>Verifies that DELETE on a non-existent loan returns NotFound.</summary>
     [Fact]
     public async Task Delete_NonExistentLoan_ReturnsNotFound()
     {
@@ -70,6 +74,7 @@ public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
+    /// <summary>Verifies that DELETE on a returned loan returns NotFound.</summary>
     [Fact]
     public async Task Delete_ReturnedLoan_ReturnsNotFound()
     {
@@ -78,6 +83,7 @@ public class LoansIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
+    /// <summary>Verifies that deleting an active loan restores the book's available copies.</summary>
     [Fact]
     public async Task Delete_ActiveLoan_RestoresBookAvailability()
     {

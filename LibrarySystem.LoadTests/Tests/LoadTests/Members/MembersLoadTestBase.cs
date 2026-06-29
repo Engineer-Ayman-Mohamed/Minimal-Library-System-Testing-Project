@@ -9,6 +9,11 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.LoadTests.Members;
 
+/// <summary>
+///     Base class for Members load/stress/spike tests.
+///     Seeds 30 members and provides concurrent HTTP methods for all member endpoints.
+///     Create operations use a thread-safe counter to guarantee unique emails.
+/// </summary>
 public class MembersLoadTestBase : IAsyncLifetime
 {
     protected readonly LoadTestBase _fixture;
@@ -17,12 +22,17 @@ public class MembersLoadTestBase : IAsyncLifetime
     
     private int _createCounter;
     private readonly object _createLock = new();
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="MembersLoadTestBase" /> class.
+    /// </summary>
     protected MembersLoadTestBase(LoadTestBase fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
         _output = output;
     }
 
+    /// <summary>Clears existing data and seeds 30 members (no loans, so delete operations succeed).</summary>
     public async Task InitializeAsync()
     {
         _fixture.LibrarySystemContext.Loans.RemoveRange(_fixture.LibrarySystemContext.Loans);
@@ -46,8 +56,10 @@ public class MembersLoadTestBase : IAsyncLifetime
         _createCounter = LoadTestConfig.Seed.Members;
     }
     
+    /// <inheritdoc />
     public Task DisposeAsync() => Task.CompletedTask;
 
+    /// <summary>Runs a number of concurrent simulated users, each calling the given request function.</summary>
     protected async Task RunUsersAsync(
         int userCount, MetricsCollector metrics,
         CancellationToken ct, int thinkTimeMs,
@@ -77,6 +89,7 @@ public class MembersLoadTestBase : IAsyncLifetime
         }
     }
 
+    /// <summary>Gets a member by ID, cycling through seeded members.</summary>
     protected async Task<(int StatusCode, long Ms)> GetMemberByIdAsync(int userId)
     {
         var memberId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -86,6 +99,7 @@ public class MembersLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Creates a member with a unique email via thread-safe counter.</summary>
     protected async Task<(int StatusCode, long Ms)> CreateMemberAsync(int userId)
     {
         int counter;
@@ -104,6 +118,7 @@ public class MembersLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Updates a member's details, cycling through seeded members.</summary>
     protected async Task<(int StatusCode, long Ms)> UpdateMemberAsync(int userId)
     {
         var memberId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -121,6 +136,7 @@ public class MembersLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Deletes a member, cycling through seeded members.</summary>
     protected async Task<(int StatusCode, long Ms)> DeleteMemberAsync(int userId)
     {
         var memberId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -130,6 +146,8 @@ public class MembersLoadTestBase : IAsyncLifetime
         sw.Stop();
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
+
+    /// <summary>Prints a labelled metrics summary to the test output.</summary>
     protected void PrintSummary(string label, MetricsCollector metrics)
         => _output.WriteLine($"\n=== {label} ===\n{metrics.Summary()}");
 }

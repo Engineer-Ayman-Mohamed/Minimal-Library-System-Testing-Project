@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace LibrarySystem.UnitTests.Tests.Services;
 
+/// <summary>Unit tests for LoanService borrow-book scenarios covering business rule validation.</summary>
 public class LoanServiceTests
 {
     private readonly Mock<ILoanRepository> _mockLoanRepo;
@@ -22,6 +23,7 @@ public class LoanServiceTests
         _service = new LoanService(_mockLoanRepo.Object, _mockBookRepo.Object, _mockMemberRepo.Object);
     }
     
+    /// <summary>Verifies that a member with 3 active loans cannot borrow another book.</summary>
     [Fact]
     public async Task BorrowBook_MemberHas3ActiveLoans_ThrowsLoanLimitExceededException()
     {
@@ -34,6 +36,7 @@ public class LoanServiceTests
         );
     }
     
+    /// <summary>Verifies that borrowing a book with zero available copies throws BookNotAvailableException.</summary>
     [Fact]
     public async Task BorrowBook_NoAvailableCopies_ThrowsBookNotAvailableException()
     {
@@ -49,6 +52,7 @@ public class LoanServiceTests
         );
     }
     
+    /// <summary>Verifies that borrowing a book with an expired membership throws MembershipExpiredException.</summary>
     [Fact]
     public async Task BorrowBook_MembershipExpired_ThrowsMembershipExpiredException()
     {
@@ -60,6 +64,7 @@ public class LoanServiceTests
         );
     }
     
+    /// <summary>Verifies that a member with an outstanding fine cannot borrow a book.</summary>
     [Fact]
     public async Task BorrowBook_HasOutstandingFine_ThrowsOutstandingFineException()
     {
@@ -71,6 +76,7 @@ public class LoanServiceTests
         );
     }
     
+    /// <summary>Verifies that a successful borrow calls AddAsync on the loan repository exactly once.</summary>
     [Fact]
     public async Task BorrowBook_Successful_CallsAddAsyncOnce()
     {
@@ -87,6 +93,7 @@ public class LoanServiceTests
         _mockLoanRepo.Verify(r => r.AddAsync(It.IsAny<Loan>()), Times.Once);
     }
     
+    /// <summary>Verifies that a successful borrow decrements the book's available copies and updates the repository.</summary>
     [Fact]
     public async Task BorrowBook_Successful_DecrementsAvailableCopies()
     {

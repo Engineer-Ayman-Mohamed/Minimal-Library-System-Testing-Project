@@ -1,5 +1,6 @@
 ﻿namespace LibrarySystem.LoadTests.Configs;
 
+/// <summary>Central configuration constants for load, stress, spike, and threshold settings used by performance tests.</summary>
 public static class LoadTestConfig
 {
     public static class Load

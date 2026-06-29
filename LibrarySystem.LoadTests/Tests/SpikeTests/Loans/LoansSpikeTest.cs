@@ -6,27 +6,33 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.SpikeTests.Loans;
 
+/// <summary>Spike tests for the Loans API endpoints evaluating performance under sudden traffic surges and recovery.</summary>
 public class LoansSpikeTest : LoansLoadTestBase, IClassFixture<LoadTestBase>
 {
     public LoansSpikeTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
 
+    /// <summary>Verifies GET loans recovers after a traffic spike.</summary>
     [Fact]
     public async Task GetLoans_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("GET /Loans", GetLoansForMemberAsync);
 
+    /// <summary>Verifies POST borrow recovers after a traffic spike.</summary>
     [Fact]
     public async Task BorrowBook_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("POST /Loans", BorrowBookAsync);
 
+    /// <summary>Verifies PATCH loan recovers after a traffic spike.</summary>
     [Fact]
     public async Task PatchLoan_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("PATCH /Loans/{id}", PatchLoanAsync);
 
+    /// <summary>Verifies PUT return recovers after a traffic spike.</summary>
     [Fact]
     public async Task ReturnBook_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("PUT /Loans/{id}/return", ReturnBookAsync);
 
+    /// <summary>Verifies DELETE loan recovers after a traffic spike.</summary>
     [Fact]
     public async Task DeleteLoan_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("DELETE /Loans/{id}", DeleteLoanAsync);

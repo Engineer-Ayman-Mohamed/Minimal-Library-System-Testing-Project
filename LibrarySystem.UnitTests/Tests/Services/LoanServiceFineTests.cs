@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace LibrarySystem.UnitTests.Tests.Services;
 
+/// <summary>Unit tests for LoanService fine-calculation and late-return scenarios.</summary>
 public class LoanServiceFineTests
 {
     private readonly Mock<ILoanRepository> _mockLoanRepo;
@@ -22,6 +23,7 @@ public class LoanServiceFineTests
         _service = new LoanService(_mockLoanRepo.Object, _mockBookRepo.Object, _mockMemberRepo.Object);
     }
     
+    /// <summary>Verifies that CalculateFine returns the correct amount for various days-late scenarios.</summary>
     [Theory]
     [InlineData(0, 0.00)]   // 0 days late = £0.00
     [InlineData(1, 0.50)]   // 1 day late = £0.50
@@ -37,6 +39,7 @@ public class LoanServiceFineTests
         result.ShouldBe(expectedFine);
     }
 
+    /// <summary>Verifies that CalculateFine returns zero when the book is returned before the due date.</summary>
     [Fact]
     public void CalculateFine_ReturnedBeforeDueDate_ReturnsZero()
     {
@@ -48,6 +51,7 @@ public class LoanServiceFineTests
         result.ShouldBe(0m);
     }
     
+    /// <summary>Verifies that a late return updates the member's outstanding fine.</summary>
     [Fact]
     public async Task ReturnBook_LateReturn_UpdatesMemberOutstandingFine()
     {
@@ -75,6 +79,7 @@ public class LoanServiceFineTests
         _mockMemberRepo.Verify(r => r.UpdateAsync(member), Times.Once);
     }
     
+    /// <summary>Verifies that returning an already-returned book throws AlreadyReturnedException.</summary>
     [Fact]
     public async Task ReturnBook_AlreadyReturned_ThrowsAlreadyReturnedException()
     {
@@ -91,6 +96,7 @@ public class LoanServiceFineTests
         );
     }
     
+    /// <summary>Verifies that an on-time return results in a fine amount of zero.</summary>
     [Fact]
     public async Task ReturnBook_OnTime_FineAmountIsZero()
     {

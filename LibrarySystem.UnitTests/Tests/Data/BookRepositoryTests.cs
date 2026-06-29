@@ -6,6 +6,7 @@ using Shouldly;
 
 namespace LibrarySystem.UnitTests.Tests.Data;
 
+/// <summary>Unit tests for BookRepository using an in-memory database.</summary>
 public class BookRepositoryTests : IDisposable
 {
     private readonly LibrarySystemContext _context;
@@ -30,6 +31,7 @@ public class BookRepositoryTests : IDisposable
         _context.SaveChanges();
     }
     
+    /// <summary>Verifies that GetAvailableBooksAsync returns only books with available copies.</summary>
     [Fact]
     public async Task GetAvailableBooksAsync_ReturnsOnlyAvailable()
     {
@@ -39,6 +41,7 @@ public class BookRepositoryTests : IDisposable
         result.ShouldAllBe(b => b.AvailableCopies > 0);
     }
     
+    /// <summary>Verifies that GetByISBNAsync returns the correct book when the ISBN exists.</summary>
     [Fact]
     public async Task GetByISBNAsync_WhenExists_ReturnsBook()
     {
@@ -48,6 +51,7 @@ public class BookRepositoryTests : IDisposable
         result.Title.ShouldBe("Available Book 1");
     }
     
+    /// <summary>Verifies that GetByISBNAsync returns null when the ISBN does not exist.</summary>
     [Fact]
     public async Task GetByISBNAsync_WhenNotExists_ReturnsNull()
     {
@@ -56,6 +60,7 @@ public class BookRepositoryTests : IDisposable
         result.ShouldBeNull();
     }
     
+    /// <summary>Verifies that GetAllAsync returns all seeded books.</summary>
     [Fact]
     public async Task GetAllAsync_ReturnsAllBooks()
     {

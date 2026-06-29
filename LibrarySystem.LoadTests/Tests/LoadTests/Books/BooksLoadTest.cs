@@ -5,10 +5,12 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.LoadTests.Books;
 
+/// <summary>Load tests for the Books API endpoint under normal concurrent user load.</summary>
 public class BooksLoadTest : BooksLoadTestBase, IClassFixture<LoadTestBase>
 {
     public BooksLoadTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
+    /// <summary>Verifies that GET books under normal load stays within response time and error rate thresholds.</summary>
     [Fact]
     public async Task GetBooks_UnderNormalLoad_PerformanceWithinThresholds()
     {
