@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace LibrarySystem.IntegrationTests.Tests.Books;
 
+/// <summary>Integration tests for the Books API endpoints covering CRUD operations and validation.</summary>
 public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
 {
     private readonly ApiFixture _fixture;
@@ -38,6 +39,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     public Task DisposeAsync() => Task.CompletedTask;
 
+    /// <summary>Verifies that PATCH on an existing book returns OK with the updated fields.</summary>
     [Fact]
     public async Task Patch_ExistingBook_ReturnsOkWithUpdatedBook()
     {
@@ -61,6 +63,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         bookResponse.TotalCopies.ShouldBe(dto.TotalCopies);
     }
     
+    /// <summary>Verifies that GET all books returns OK with all seeded books.</summary>
     [Fact]
     public async Task GetAll_ReturnsOkWithAllBooks()
     {
@@ -73,6 +76,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         books.Count.ShouldBe(4);
     }
     
+    /// <summary>Verifies that GET all with available filter returns only books with available copies.</summary>
     [Fact]
     public async Task GetAll_WithAvailableFilter_ReturnsOnlyAvailableBooks()
     {
@@ -87,6 +91,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         books[0].Id.ShouldBe(1);
     }
     
+    /// <summary>Verifies that GET by ID for an existing book returns OK with the correct book data.</summary>
     [Fact]
     public async Task GetById_ExistingBook_ReturnsOkWithBook()
     {
@@ -104,6 +109,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         book.AvailableCopies.ShouldBe(2);
     }
     
+    /// <summary>Verifies that GET by ID for a non-existent book returns NotFound.</summary>
     [Fact]
     public async Task GetById_NonExistentBook_ReturnsNotFound()
     {
@@ -112,6 +118,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that POST with a valid book returns Created with the new book data.</summary>
     [Fact]
     public async Task Create_ValidBook_ReturnsCreatedWithBook()
     {
@@ -136,6 +143,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         book.AvailableCopies.ShouldBe(dto.TotalCopies);
     }
     
+    /// <summary>Verifies that POST with a duplicate ISBN returns Conflict.</summary>
     [Fact]
     public async Task Create_DuplicateISBN_ReturnsConflict()
     {
@@ -152,6 +160,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
     
+    /// <summary>Verifies that POST with an invalid ISBN returns BadRequest.</summary>
     [Fact]
     public async Task Create_InvalidISBN_ReturnsBadRequest()
     {
@@ -168,6 +177,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
+    /// <summary>Verifies that POST with zero total copies returns BadRequest.</summary>
     [Fact]
     public async Task Create_ZeroTotalCopies_ReturnsBadRequest()
     {
@@ -184,6 +194,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
+    /// <summary>Verifies that PATCH on a non-existent book returns NotFound.</summary>
     [Fact]
     public async Task Patch_NonExistentBook_ReturnsNotFound()
     {
@@ -200,6 +211,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that DELETE on an existing book returns NoContent.</summary>
     [Fact]
     public async Task Delete_ExistingBook_ReturnsNoContent()
     {
@@ -208,6 +220,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
      
+    /// <summary>Verifies that DELETE on a non-existent book returns NotFound.</summary>
     [Fact]
     public async Task Delete_NonExistentBook_ReturnsNotFound()
     {
@@ -216,6 +229,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that a deleted book is no longer retrievable via GET.</summary>
     [Fact]
     public async Task Delete_ExistingBook_IsNoLongerRetrievable()
     {
@@ -226,6 +240,7 @@ public class BooksIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that a newly created book is immediately retrievable via GET.</summary>
     [Fact]
     public async Task Create_ValidBook_IsRetrievableAfterCreation()
     {

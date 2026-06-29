@@ -2,13 +2,14 @@
 
 namespace LibrarySystem.LoadTests.Helpers;
 
-
+/// <summary>Represents a single HTTP request metric captured during a load test.</summary>
 public record RequestMetric(
     int StatusCode,
     long ResponseTimeMs,
     bool IsSuccess,
     DateTime Timestamp = default);
 
+/// <summary>Thread-safe collector that records and summarizes HTTP request metrics during load, stress, and spike tests.</summary>
 public class MetricsCollector
 {
     private readonly List<RequestMetric> _metrics = new(1000);

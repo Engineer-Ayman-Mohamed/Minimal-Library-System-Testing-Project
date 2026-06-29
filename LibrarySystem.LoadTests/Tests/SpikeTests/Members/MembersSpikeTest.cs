@@ -6,23 +6,28 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.SpikeTests.Members;
 
+/// <summary>Spike tests for the Members API endpoints evaluating performance under sudden traffic surges and recovery.</summary>
 public class MembersSpikeTest : MembersLoadTestBase, IClassFixture<LoadTestBase>
 {
     public MembersSpikeTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
 
+    /// <summary>Verifies GET member recovers after a traffic spike.</summary>
     [Fact]
     public async Task GetMemberById_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("GET /Members/{id}", GetMemberByIdAsync);
 
+    /// <summary>Verifies POST member recovers after a traffic spike.</summary>
     [Fact]
     public async Task CreateMember_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("POST /Members", CreateMemberAsync);
 
+    /// <summary>Verifies PATCH member recovers after a traffic spike.</summary>
     [Fact]
     public async Task UpdateMember_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("PATCH /Members/{id}", UpdateMemberAsync);
 
+    /// <summary>Verifies DELETE member recovers after a traffic spike.</summary>
     [Fact]
     public async Task DeleteMember_UnderSpikeLoad_RecoversThenNormal()
         => await RunSpikeTest("DELETE /Members/{id}", DeleteMemberAsync);

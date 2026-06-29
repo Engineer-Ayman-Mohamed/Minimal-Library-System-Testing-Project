@@ -6,23 +6,28 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.StressTests.Members;
 
+/// <summary>Stress tests for the Members API endpoints finding the breaking point under increasing concurrent user load.</summary>
 public class MembersStressTest : MembersLoadTestBase, IClassFixture<LoadTestBase>
 {
     public MembersStressTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
 
+    /// <summary>Finds the breaking point for GET member under staged user load.</summary>
     [Fact]
     public async Task GetMemberById_UnderIncreasingLoad_FindsBreakingPoint()
         => await RunStressTest("GET /Members/{id}", GetMemberByIdAsync);
 
+    /// <summary>Finds the breaking point for POST member under staged user load.</summary>
     [Fact]
     public async Task CreateMember_UnderIncreasingLoad_FindsBreakingPoint()
         => await RunStressTest("POST /Members", CreateMemberAsync);
 
+    /// <summary>Finds the breaking point for PATCH member under staged user load.</summary>
     [Fact]
     public async Task UpdateMember_UnderIncreasingLoad_FindsBreakingPoint()
         => await RunStressTest("PATCH /Members/{id}", UpdateMemberAsync);
 
+    /// <summary>Finds the breaking point for DELETE member under staged user load.</summary>
     [Fact]
     public async Task DeleteMember_UnderIncreasingLoad_FindsBreakingPoint()
         => await RunStressTest("DELETE /Members/{id}", DeleteMemberAsync);

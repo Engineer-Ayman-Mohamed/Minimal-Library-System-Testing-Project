@@ -6,11 +6,13 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.SpikeTests.Books;
 
+/// <summary>Spike tests for the Books API endpoint evaluating performance under sudden traffic surges and recovery.</summary>
 public class BooksSpikeTest : BooksLoadTestBase, IClassFixture<LoadTestBase>
 {
     public BooksSpikeTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
 
+    /// <summary>Runs normal, spike, and recovery phases, then asserts threshold compliance across all phases.</summary>
     [Fact]
     public async Task GetBooks_UnderSpikeLoad_RecoversThenNormal()
     {

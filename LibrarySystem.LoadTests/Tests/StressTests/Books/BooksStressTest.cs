@@ -6,11 +6,13 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.StressTests.Books;
 
+/// <summary>Stress tests for the Books API endpoint finding the breaking point under increasing concurrent user load.</summary>
 public class BooksStressTest : BooksLoadTestBase, IClassFixture<LoadTestBase>
 {
     public BooksStressTest(LoadTestBase fixture, ITestOutputHelper output)
         : base(fixture, output) { }
 
+    /// <summary>Runs staged user loads and identifies the breaking point where error rate exceeds thresholds.</summary>
     [Fact]
     public async Task GetBooks_UnderIncreasingLoad_FindsBreakingPoint()
     {

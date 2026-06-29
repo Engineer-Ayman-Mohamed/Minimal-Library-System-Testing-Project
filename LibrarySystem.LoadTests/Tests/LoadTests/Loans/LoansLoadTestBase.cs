@@ -9,17 +9,27 @@ using Xunit.Abstractions;
 
 namespace LibrarySystem.LoadTests.Tests.LoadTests.Loans;
 
+/// <summary>
+///     Base class for Loans load/stress/spike tests.
+///     Seeds 60 books, 30 members, and 30 active loans, then provides
+///     concurrent HTTP methods for all loan endpoints.
+/// </summary>
 public class LoansLoadTestBase : IAsyncLifetime
 {
     protected readonly LoadTestBase _fixture;
     protected readonly ITestOutputHelper _output;
     protected HttpClient Client => _fixture.Client;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="LoansLoadTestBase" /> class.
+    /// </summary>
     protected LoansLoadTestBase(LoadTestBase fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
         _output = output;
     }
 
+    /// <summary>Clears existing data and seeds books, members, and one active loan per member.</summary>
     public async Task InitializeAsync()
     {
         _fixture.LibrarySystemContext.Loans.RemoveRange(_fixture.LibrarySystemContext.Loans);
@@ -65,8 +75,10 @@ public class LoansLoadTestBase : IAsyncLifetime
         await _fixture.LibrarySystemContext.SaveChangesAsync();
     }
     
+    /// <inheritdoc />
     public Task DisposeAsync() => Task.CompletedTask;
     
+    /// <summary>Runs a number of concurrent simulated users, each calling the given request function.</summary>
     protected async Task RunUsersAsync(
         int userCount, MetricsCollector metrics,
         CancellationToken ct, int thinkTimeMs, Func<int, 
@@ -96,7 +108,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         }
     }
 
-
+    /// <summary>Gets all loans for a member, cycling through seeded members.</summary>
     protected async Task<(int StatusCode, long Ms)> GetLoansForMemberAsync(int userId)
     {
         var memberId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -106,6 +118,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Borrows a book, cycling through unique book/member pairs.</summary>
     protected async Task<(int StatusCode, long Ms)> BorrowBookAsync(int userId)
     {
         var bookId = (userId % (LoadTestConfig.Seed.Books - LoadTestConfig.Seed.Members))
@@ -119,6 +132,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Updates a loan's due date, cycling through seeded loans.</summary>
     protected async Task<(int StatusCode, long Ms)> PatchLoanAsync(int userId)
     {
         var loanId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -129,6 +143,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Returns a borrowed book, cycling through seeded loans.</summary>
     protected async Task<(int StatusCode, long Ms)> ReturnBookAsync(int userId)
     {
         var loanId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -138,6 +153,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
+    /// <summary>Deletes a loan, cycling through seeded loans.</summary>
     protected async Task<(int StatusCode, long Ms)> DeleteLoanAsync(int userId)
     {
         var loanId = (userId % LoadTestConfig.Seed.Members) + 1;
@@ -147,7 +163,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         return ((int)response.StatusCode, sw.ElapsedMilliseconds);
     }
 
-
+    /// <summary>Asserts that average response time and P95 are within configured thresholds.</summary>
     protected void AssertLoadThresholds(MetricsCollector metrics, string label)
     {
         var failures = new List<string>();
@@ -161,6 +177,7 @@ public class LoansLoadTestBase : IAsyncLifetime
         Assert.False(failures.Any(), $"Load thresholds violated:\n" + string.Join('\n', failures));
     }
 
+    /// <summary>Prints a labelled metrics summary to the test output.</summary>
     protected void PrintSummary(string label, MetricsCollector metrics)
         => _output.WriteLine($"\n=== {label} ===\n{metrics.Summary()}");
 }

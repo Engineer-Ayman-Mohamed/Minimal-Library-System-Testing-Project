@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace LibrarySystem.IntegrationTests.Tests.Members;
 
+/// <summary>Integration tests for the Members API endpoints covering CRUD operations and validation.</summary>
 public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
 {
     private readonly ApiFixture _fixture;
@@ -46,6 +47,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
     }
     public Task DisposeAsync() => Task.CompletedTask;
     
+    /// <summary>Verifies that GET by ID for an existing member returns OK with the correct member data.</summary>
     [Fact]
     public async Task GetById_ExistingMember_ReturnsOkWithMember()
     {
@@ -61,6 +63,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.OutstandingFine.ShouldBe(0);
     }
     
+    /// <summary>Verifies that GET by ID for a non-existent member returns NotFound.</summary>
     [Fact]
     public async Task GetById_NonExistentMember_ReturnsNotFound()
     {
@@ -69,6 +72,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that GET by ID for a member with active loans returns the correct active loan count.</summary>
     [Fact]
     public async Task GetById_MemberWithActiveLoans_ReturnsCorrectActiveLoanCount()
     {
@@ -81,6 +85,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.ActiveLoanCount.ShouldBe(1);
     }
     
+    /// <summary>Verifies that GET by ID for a member with no loans returns zero active loan count.</summary>
     [Fact]
     public async Task GetById_MemberWithNoLoans_ReturnsZeroActiveLoanCount()
     {
@@ -93,6 +98,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.ActiveLoanCount.ShouldBe(0);
     }
     
+    /// <summary>Verifies that GET by ID for a member with an outstanding fine returns the correct fine amount.</summary>
     [Fact]
     public async Task GetById_MemberWithOutstandingFine_ReturnsCorrectFineAmount()
     {
@@ -105,6 +111,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.OutstandingFine.ShouldBe(15.50m);
     }
     
+    /// <summary>Verifies that POST with a valid member returns Created with the new member data.</summary>
     [Fact]
     public async Task Create_ValidMember_ReturnsCreatedWithMember()
     {
@@ -128,6 +135,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.OutstandingFine.ShouldBe(0);
     }
     
+    /// <summary>Verifies that POST with a duplicate email returns Conflict.</summary>
     [Fact]
     public async Task Create_DuplicateEmail_ReturnsConflict()
     {
@@ -143,6 +151,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
     
+    /// <summary>Verifies that POST with an invalid email returns BadRequest.</summary>
     [Fact]
     public async Task Create_InvalidEmail_ReturnsBadRequest()
     {
@@ -158,6 +167,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
+    /// <summary>Verifies that POST with a missing full name returns BadRequest.</summary>
     [Fact]
     public async Task Create_MissingFullName_ReturnsBadRequest()
     {
@@ -173,6 +183,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
+    /// <summary>Verifies that a newly created member is immediately retrievable via GET.</summary>
     [Fact]
     public async Task Create_ValidMember_IsRetrievableAfterCreation()
     {
@@ -199,6 +210,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         retrieved.Email.ShouldBe(dto.Email);
     }
     
+    /// <summary>Verifies that PATCH on an existing member returns OK with the updated fields.</summary>
     [Fact]
     public async Task Patch_ExistingMember_ReturnsOkWithUpdatedMember()
     {
@@ -221,6 +233,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.MembershipExpiryDate.ShouldBe(dto.MembershipExpiryDate);
     }
     
+    /// <summary>Verifies that PATCH on a non-existent member returns NotFound.</summary>
     [Fact]
     public async Task Patch_NonExistentMember_ReturnsNotFound()
     {
@@ -236,6 +249,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that updating a member does not affect their active loan count.</summary>
     [Fact]
     public async Task Patch_ExistingMember_ActiveLoanCountRemainsCorrect()
     {
@@ -255,6 +269,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         member.ActiveLoanCount.ShouldBe(1);
     }
     
+    /// <summary>Verifies that PATCH with an invalid email returns BadRequest.</summary>
     [Fact]
     public async Task Patch_InvalidEmail_ReturnsBadRequest()
     {
@@ -270,6 +285,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
+    /// <summary>Verifies that DELETE on an existing member returns NoContent.</summary>
     [Fact]
     public async Task Delete_ExistingMember_ReturnsNoContent()
     {
@@ -278,6 +294,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
     
+    /// <summary>Verifies that DELETE on a non-existent member returns NotFound.</summary>
     [Fact]
     public async Task Delete_NonExistentMember_ReturnsNotFound()
     {
@@ -286,6 +303,7 @@ public class MembersIntegrationTests : IClassFixture<ApiFixture>, IAsyncLifetime
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
     
+    /// <summary>Verifies that a deleted member is no longer retrievable via GET.</summary>
     [Fact]
     public async Task Delete_ExistingMember_IsNoLongerRetrievable()
     {

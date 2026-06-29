@@ -9,12 +9,14 @@ using NetArchTest.Rules;
 
 namespace LibrarySystem.ArchitectureTest.Tests;
 
+/// <summary>Architecture tests that enforce layer dependencies, naming conventions, and namespace rules across the solution.</summary>
 public class ArchitectureTest
 {
     private static readonly Assembly DataAssembly = typeof(Book).Assembly;
     private static readonly Assembly ServicesAssembly = typeof(BookService).Assembly;
     private static readonly Assembly ApiAssembly = typeof(BooksController).Assembly;
     
+    /// <summary>Ensures the Data layer has no dependency on the Services layer.</summary>
     [Test]
     public void DataLayer_ShouldNotHaveDependencyOn_ServicesLayer()
     {
@@ -28,6 +30,7 @@ public class ArchitectureTest
             $"Data layer depends on Services: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures the Data layer has no dependency on the API layer.</summary>
     [Test]
     public void DataLayer_ShouldNotHaveDependencyOn_ApiLayer()
     {
@@ -41,6 +44,7 @@ public class ArchitectureTest
             $"Data layer depends on API: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures the Services layer has no dependency on the API layer.</summary>
     [Test]
     public void ServicesLayer_ShouldNotHaveDependencyOn_ApiLayer()
     {
@@ -54,6 +58,7 @@ public class ArchitectureTest
             $"Services layer depends on API: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures all interfaces follow the naming convention of starting with 'I'.</summary>
     [Test]
     public void Interfaces_ShouldStartWithI()
     {
@@ -69,6 +74,7 @@ public class ArchitectureTest
             $"Interfaces not starting with I: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures repository implementations reside in the Data.Repositories namespace.</summary>
     [Test]
     public void RepositoryClasses_ShouldBeInRepositoriesNamespace()
     {
@@ -84,6 +90,7 @@ public class ArchitectureTest
             $"Repositories outside Repositories namespace: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures service implementations reside in the Services namespace.</summary>
     [Test]
     public void ServiceClasses_ShouldBeInServicesNamespace()
     {
@@ -99,6 +106,7 @@ public class ArchitectureTest
             $"Services outside Services namespace: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures controller classes reside in the API.Controllers namespace.</summary>
     [Test]
     public void ControllerClasses_ShouldBeInControllersNamespace()
     {
@@ -114,6 +122,7 @@ public class ArchitectureTest
             $"Controllers outside Controllers namespace: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures all service classes implement at least one interface.</summary>
     [Test]
     public void AllServices_ShouldImplementAnInterface()
     {
@@ -131,6 +140,7 @@ public class ArchitectureTest
             $"Services without interface: {string.Join(", ", failures)}");
     }
     
+    /// <summary>Ensures all repository classes implement at least one interface.</summary>
     [Test]
     public void AllRepositories_ShouldImplementAnInterface()
     {
@@ -148,6 +158,7 @@ public class ArchitectureTest
             $"Repositories without interface: {string.Join(", ", failures)}");
     }
     
+    /// <summary>Ensures service interfaces are defined in the Services assembly.</summary>
     [Test]
     public void ServiceInterfaces_ShouldBeInServicesAssembly()
     {
@@ -167,6 +178,7 @@ public class ArchitectureTest
             $"Service interfaces outside Services: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures repository interfaces are defined in the Data assembly.</summary>
     [Test]
     public void RepositoryInterfaces_ShouldBeInDataAssembly()
     {
@@ -186,6 +198,7 @@ public class ArchitectureTest
             $"Repository interfaces outside Data: {FailingNames(result)}");
     }
     
+    /// <summary>Ensures domain entities live exclusively in the Data assembly.</summary>
     [Test]
     public void DomainEntities_ShouldBeInDataAssembly_Only()
     {
@@ -198,6 +211,7 @@ public class ArchitectureTest
         }
     }
     
+    /// <summary>Ensures the API layer does not directly reference domain entities outside of infrastructure namespaces.</summary>
     [Test]
     public void ApiLayer_ShouldNotReferenceDomainEntities_ExceptInfrastructure()
     {
