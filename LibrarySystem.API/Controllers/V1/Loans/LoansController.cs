@@ -1,32 +1,26 @@
-﻿using AutoMapper;
+using Asp.Versioning;
+using AutoMapper;
 using LibrarySystem.API.DTOs;
 using LibrarySystem.Services.Exceptions;
 using LibrarySystem.Services.services.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LibrarySystem.API.Controllers.Loans;
+namespace LibrarySystem.API.Controllers.V1.Loans;
 
-/// <summary>
-///     Handles loan operations: borrow, return, update, delete, and query by member.
-/// </summary>
 [ApiController]
+[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class LoansController : ControllerBase
 {
     private readonly ILoanService _loanService;
     private readonly IMapper _mapper;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="LoansController" /> class.
-    /// </summary>
     public LoansController(ILoanService loanService, IMapper mapper)
     {
         _loanService = loanService;
         _mapper = mapper;
     }
     
-    /// <summary>Returns all loans for a given member.</summary>
-    /// <param name="memberId">The member identifier.</param>
     [HttpGet]
     public async Task<ActionResult<List<LoanDto>>> GetByMember([FromQuery] int memberId)
     {
@@ -34,9 +28,6 @@ public class LoansController : ControllerBase
         return Ok(_mapper.Map<List<LoanDto>>(loans));
     }
     
-    /// <summary>Borrows a book for a member.</summary>
-    /// <param name="dto">The loan creation payload.</param>
-    /// <returns>201 on success, 422 if any business rule is violated.</returns>
     [HttpPost]
     public async Task<ActionResult<LoanDto>> Borrow([FromBody] CreateLoanDto dto)
     {
@@ -51,9 +42,6 @@ public class LoansController : ControllerBase
         catch (BookNotAvailableException ex) { return UnprocessableEntity(new { message = ex.Message }); }
     }
 
-    /// <summary>Returns a borrowed book.</summary>
-    /// <param name="id">The loan identifier.</param>
-    /// <returns>200 with fine info, or 422 if already returned.</returns>
     [HttpPut("{id}/return")]
     public async Task<ActionResult<LoanDto>> Return(int id)
     {
@@ -65,10 +53,6 @@ public class LoansController : ControllerBase
         catch (AlreadyReturnedException ex) { return UnprocessableEntity(new { message = ex.Message }); }
     }
 
-    /// <summary>Updates a loan's due date.</summary>
-    /// <param name="id">The loan identifier.</param>
-    /// <param name="dto">Payload with new due date.</param>
-    /// <returns>200 on success, or 404 if not found or already returned.</returns>
     [HttpPatch("{id}")]
     public async Task<ActionResult<LoanDto>> Update(int id, [FromBody] UpdateLoanDto dto)
     {
@@ -83,9 +67,6 @@ public class LoansController : ControllerBase
         }
     }
 
-    /// <summary>Deletes a loan and restores book availability.</summary>
-    /// <param name="id">The loan identifier.</param>
-    /// <returns>204 on success, or 404 if not found or already returned.</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
